@@ -1,0 +1,549 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ivory: #F5F4EF;
+    --charcoal: #252525;
+    --lightgray: #D7D7D2;
+    --midgray: #A7A7A1;
+    --muted: #777771;
+    --signal: #FF3218;
+    --white: #FFFFFF;
+
+    /* Legacy compatibility */
+    --offwhite: #F5F4EF;
+    --softgray: #D7D7D2;
+    --cream: #F5F4EF;
+    --steelblue: #252525;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--ivory);
+  }
+
+  body {
+    background-color: var(--ivory);
+    color: var(--charcoal);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    selection-background-color: var(--signal);
+    selection-color: var(--white);
+  }
+
+  ::selection {
+    background: #FF3218;
+    color: #FFFFFF;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--charcoal);
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+}
+
+/* =========================================================================
+   1. Architectural Linework & Grid System
+   ========================================================================= */
+
+.arch-grid-bg {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(37, 37, 37, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(37, 37, 37, 0.04) 1px, transparent 1px);
+}
+
+.arch-grid-subtle {
+  background-size: 80px 80px;
+  background-image: 
+    linear-gradient(to right, rgba(215, 215, 210, 0.5) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(215, 215, 210, 0.5) 1px, transparent 1px);
+}
+
+.arch-border {
+  border: 1px solid var(--lightgray);
+}
+
+.arch-border-t {
+  border-top: 1px solid var(--lightgray);
+}
+
+.arch-border-b {
+  border-bottom: 1px solid var(--lightgray);
+}
+
+.arch-border-r {
+  border-right: 1px solid var(--lightgray);
+}
+
+.arch-border-l {
+  border-left: 1px solid var(--lightgray);
+}
+
+/* Corner Crosshair Marks */
+.corner-crosshair {
+  position: relative;
+}
+.corner-crosshair::before,
+.corner-crosshair::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+.corner-crosshair::before {
+  top: -4px;
+  left: -4px;
+  width: 9px;
+  height: 9px;
+  border-top: 1px solid var(--midgray);
+  border-left: 1px solid var(--midgray);
+}
+.corner-crosshair::after {
+  bottom: -4px;
+  right: -4px;
+  width: 9px;
+  height: 9px;
+  border-bottom: 1px solid var(--midgray);
+  border-right: 1px solid var(--midgray);
+}
+
+/* Measurement ticks */
+.measurement-tick {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--midgray);
+  text-transform: uppercase;
+}
+
+/* =========================================================================
+   2. SVG Path Drawing Animations
+   ========================================================================= */
+
+@keyframes drawPath {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawPath 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes scanLaser {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.animate-scanner-laser {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #FF3218 50%, transparent 100%);
+  box-shadow: 0 0 12px #FF3218;
+  animation: scanLaser 3s ease-in-out infinite;
+}
+
+/* =========================================================================
+   3. Custom Cursor & Interactive Classes
+   ========================================================================= */
+
+/* Hide native cursor on desktop when custom cursor is active */
+@media (hover: hover) and (pointer: fine) {
+  .custom-cursor-active,
+  .custom-cursor-active * {
+    cursor: none !important;
+  }
+
+  /* Form inputs retain native text cursor */
+  .custom-cursor-active input[type="text"],
+  .custom-cursor-active textarea,
+  .custom-cursor-active input[type="password"] {
+    cursor: text !important;
+  }
+}
+
+/* Cursor root wrapper */
+.cursor-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: normal;
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background-color: var(--charcoal);
+  pointer-events: none;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+  z-index: 10000;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 38px;
+  height: 38px;
+  margin-top: -19px;
+  margin-left: -19px;
+  border-radius: 50%;
+  border: 1px solid rgba(37, 37, 37, 0.45);
+  pointer-events: none;
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              margin 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease,
+              background-color 0.25s ease;
+  z-index: 9999;
+}
+
+.cursor-ring.cursor-hover {
+  width: 64px;
+  height: 64px;
+  margin-top: -32px;
+  margin-left: -32px;
+  border-color: #FF3218;
+  background-color: rgba(255, 50, 24, 0.04);
+}
+
+.cursor-dot.cursor-hover {
+  background-color: #FF3218;
+  transform: scale(1.6);
+}
+
+.cursor-badge {
+  position: fixed;
+  pointer-events: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #FF3218;
+  background: rgba(245, 244, 239, 0.95);
+  border: 1px solid #FF3218;
+  padding: 2px 7px;
+  border-radius: 999px;
+  transform: translate(24px, 16px);
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(255, 50, 24, 0.15);
+  z-index: 10001;
+}
+
+/* =========================================================================
+   4. Buttons & Architectural UI Elements
+   ========================================================================= */
+
+/* Primary Signal Orange-Red Button */
+.btn-signal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background-color: #FF3218;
+  color: #FFFFFF;
+  border: 1px solid #FF3218;
+  padding: 0.75rem 1.75rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+.btn-signal:hover {
+  background-color: #E02812;
+  border-color: #E02812;
+  box-shadow: 0 0 24px rgba(255, 50, 24, 0.35);
+  transform: translateY(-1px);
+}
+.btn-signal:active {
+  transform: translateY(1px);
+}
+
+/* Architectural Charcoal Button */
+.btn-arch-charcoal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background-color: #252525;
+  color: #F5F4EF;
+  border: 1px solid #252525;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+}
+.btn-arch-charcoal:hover {
+  background-color: #000000;
+  border-color: #000000;
+  transform: translateY(-1px);
+}
+
+/* Architectural Outline Button */
+.btn-arch-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background-color: transparent;
+  color: #252525;
+  border: 1px solid #D7D7D2;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+.btn-arch-outline:hover {
+  border-color: #252525;
+  background-color: rgba(37, 37, 37, 0.03);
+}
+
+/* Architectural Card */
+.arch-card {
+  background: #FFFFFF;
+  border: 1px solid #D7D7D2;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+.arch-card:hover {
+  border-color: #252525;
+  box-shadow: 0 8px 30px rgba(37, 37, 37, 0.04);
+}
+
+/* Editorial Minimalist Cards (for compatibility) */
+.editorial-card {
+  background: #FFFFFF;
+  border: 1px solid #D7D7D2;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 4px rgba(37, 37, 37, 0.02);
+  transition: all 0.2s ease;
+}
+.editorial-card:hover {
+  border-color: #A7A7A1;
+}
+
+/* Button legacy classes */
+.btn-charcoal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #F5F4EF;
+  background-color: #252525;
+  border-radius: 9999px;
+  border: 1px solid #252525;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.8125rem;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+.btn-charcoal:hover:not(:disabled) {
+  background-color: #000000;
+  border-color: #000000;
+}
+
+.btn-pill-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #252525;
+  background-color: #FFFFFF;
+  border-radius: 9999px;
+  border: 1px solid #D7D7D2;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+.btn-pill-light:hover {
+  border-color: #252525;
+}
+
+/* Range Sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  background: #D7D7D2;
+  height: 4px;
+  border-radius: 999px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #FF3218;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 1px 4px rgba(37, 37, 37, 0.25);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+}
+
+/* Custom Scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #F5F4EF;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #D7D7D2;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #252525;
+}
+
+.hero-panel {
+  background: #252525;
+  color: #F5F4EF;
+}
+
+.measurement-frame {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+.measurement-edge {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: #A7A7A1;
+}
+
+.measurement-edge-top {
+  top: 58px;
+  left: 18px;
+  right: 18px;
+  border-top: 1px solid rgba(215, 215, 210, 0.8);
+  padding-top: 4px;
+}
+
+.measurement-edge-bottom {
+  bottom: 10px;
+  left: 18px;
+  right: 18px;
+  border-bottom: 1px solid rgba(215, 215, 210, 0.8);
+  padding-bottom: 4px;
+}
+
+.measurement-edge-left,
+.measurement-edge-right {
+  top: 80px;
+  bottom: 28px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.measurement-edge-left {
+  left: 8px;
+  padding-left: 2px;
+  border-left: 1px solid rgba(215, 215, 210, 0.8);
+}
+
+.measurement-edge-right {
+  right: 8px;
+  align-items: flex-end;
+  padding-right: 2px;
+  border-right: 1px solid rgba(215, 215, 210, 0.8);
+}
+
+.measurement-mark,
+.measurement-mark-vert {
+  opacity: 0.7;
+}
+
+@media (max-width: 1023px) {
+  .measurement-frame {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-draw-path,
+  .animate-scanner-laser,
+  .animate-pulse-glow {
+    animation: none !important;
+  }
+
+  .animate-draw-path {
+    stroke-dashoffset: 0 !important;
+  }
+}
